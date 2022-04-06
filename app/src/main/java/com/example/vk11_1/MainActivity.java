@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
+    Fragment fragment = new FragmentHome();
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
@@ -34,13 +35,26 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.flContent, new FragmentHome()); //korvataa frameLayout fragmentilla
+        drawerToggle = setupDrawerToggle();
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerToggle.syncState();
 
+        drawerLayout.addDrawerListener(drawerToggle);
+
+        setFragment(fragment);
         setupDrawerContent(navigationView);
 
 
+    }
+
+    public void setFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.flContent, fragment).commit();
+    }
+
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        return new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open,  R.string.nav_close);
     }
 
     @Override
@@ -67,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        Fragment fragment = null;
 
         if(menuItem.getItemId() == R.id.nav_settings) {
             fragment = new FragmentSettings();
